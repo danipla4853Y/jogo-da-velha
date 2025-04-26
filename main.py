@@ -22,6 +22,9 @@ nickname = " "
 me = "X"
 ia = "O"
 
+ai_w = 0
+me_w = 0
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -73,8 +76,9 @@ while running:
     my_name = FONT_MIN.render(f"DESENVOLVIDO POR MARIA EDUARDA DE AZEVEDO", True, WHITE)
     window.blit(my_name, center_pos(my_name.get_rect(), 560))
 
-    start_button(window, "JOGAR", 380, me, ia, nickname.strip(), 10)
+    start_button(window, "JOGAR", 380, me, ia, nickname.strip(),ai_w,me_w, 10)
+    
     about_button(window, 450, 10)
-
+    
     pygame.display.flip()
     clock.tick(60)
