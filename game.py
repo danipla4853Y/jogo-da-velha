@@ -14,6 +14,8 @@ WHITE = (255,255,255)
 BLACK = (0,0,0)
 GREEN = (0, 255, 0)
 BLUE = (0,0,255)
+PINK = (255,37,37)
+
 
 FONT = pygame.font.Font("assets/font.ttf", 70)
 FONT_MIN = pygame.font.Font("assets/font.ttf", 30)
@@ -40,12 +42,13 @@ def about():
 
     label = tk.Label(text=text)
     label.pack()
+
     
     repo = tk.Label(fg="blue", text="Código fonte")
     github = tk.Label(fg="blue", text="GitHub")
     linkedin = tk.Label(fg="blue", text="Linkedin")
     twitter = tk.Label(fg="blue", text="Twitter")
-
+    
     repo.pack()
     github.pack()
     linkedin.pack()
@@ -56,6 +59,7 @@ def about():
     twitter.bind("<Button-1>", lambda e: callback("https://twitter.com/ddt_azevedo"))
     linkedin.bind("<Button-1>", lambda e: callback("https://www.linkedin.com/in/mariaeduardadeazevedo/"))
 
+    
     window.mainloop()
     file.close()
 
@@ -77,7 +81,7 @@ def about_button(window, height, border=0):
 
     return True
 
-def start_button(window, text, height, me, ai, nickname, border=0):
+def start_button(window, text, height, me, ai, nickname,ai_w,me_w, border=0):
     render = FONT.render(text, True, BLACK)
     font_rect = render.get_rect()
     middle = (font_rect[0] + font_rect[2])//2
@@ -89,26 +93,30 @@ def start_button(window, text, height, me, ai, nickname, border=0):
         mouse_pos = pygame.mouse.get_pos()
         if mouse_pos[0] in range(pos[0], pos[0]+pos[2]) and mouse_pos[1] in range(pos[1], pos[1]+pos[3]):
             play_sound("open_001")
-            game(ai, me, nickname)
+            game(ai, me, nickname,ai_w,me_w)
             return False
 
     return True
             
 
-def end_window(clock, winner, me, ai, nickname):
+
+def end_window(clock, winner, me, ai, nickname,ai_w, me_w):
     window = pygame.display.set_mode([600,600])
     running = True
-    
+
     if winner == me:
+       
         play_sound("winner")
+        
     elif winner == ai:
+      
         play_sound("looser")
     else:
         play_sound("tie")
 
     while running:    
         window.fill(BLACK)
-        running = start_button(window, "JOGAR NOVAMENTE", 350, me, ai, nickname, border=10)
+        running = start_button(window, "JOGAR NOVAMENTE", 350, me, ai, nickname, ai_w, me_w, border=10)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -121,11 +129,27 @@ def end_window(clock, winner, me, ai, nickname):
         middle = (font_rect[0]+font_rect[2])//2
         pos = (300-middle, 200)
         
-
         window.blit(render, pos)
-        clock.tick(60)    
-        pygame.display.flip()
 
+        text1 = f"{nickname}: {me_w}"
+        render1 = FONT.render(text1, True, PINK)
+        pos1 = (500-middle, 100)
+
+        window.blit(render1,pos1)
+        
+        text2 = f"AI: {ai_w}"
+        render2 = FONT.render(text2, True, PINK)
+        pos2 = (300-middle, 100)
+        
+        window.blit(render2,pos2)
+        
+
+        
+        clock.tick(60)  
+
+
+        
+        pygame.display.flip()
 
 def minimax(board, maximizing, ai, me):
     win = has_winner(board)
@@ -280,16 +304,22 @@ def draw_circle(coord, window):
     pygame.draw.circle(window, WHITE, center, 50, 10)
 
 
+    
+
 def print_table(table):
     print("- - -")
     for i in range(3):
         print(" ".join(table[i]))
     print("- - -")
 
-def game(ai, me, nickname):
+
+
+def game(ai, me, nickname,ai_w,me_w):
     window = pygame.display.set_mode([600,600])
     clock = pygame.time.Clock()
 
+    
+    
     table = [
         [" "," "," "],
         [" "," "," "],
@@ -352,7 +382,14 @@ def game(ai, me, nickname):
         winner = ""
         if has_winner(table) == ai:
             winner = "COMPUTER"
+            
+            ai_w +=1
+            
         elif has_winner(table) == me:
             winner = nickname
+            me_w +=1
+            
+            
+        end_window(clock, winner, me, ai, nickname,ai_w, me_w)
+        
 
-        end_window(clock, winner, me, ai, nickname)
